@@ -1,0 +1,127 @@
+/* =========================================
+   全ページ共通設定 (Base)
+   ========================================= */
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    font-family: 'Courier New', monospace;
+    background-color: #000; /* 初期色 */
+    color: #ffffff;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    transition: background-image 1s ease-in-out, color 1s ease;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* フィルターの濃さ */
+    z-index: -1;
+}
+
+/* =========================================
+   ナビゲーション (Nav)
+   ========================================= */
+nav {
+    position: fixed;
+    top: 0; left: 0; width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: flex-end;
+    z-index: 100;
+}
+
+nav a {
+    color: inherit;
+    text-decoration: none;
+    margin-left: 30px;
+    font-size: 1rem;
+    opacity: 0.7;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+    transition: opacity 0.3s;
+}
+
+nav a:hover {
+    opacity: 1;
+    text-decoration: underline;
+}
+
+/* --- css/style.css に追記 --- */
+
+/* 現在開いているページのリンクスタイル */
+nav a.active {
+    opacity: 1;              /* 透明度をなくしてくっきり表示 */
+    font-weight: bold;       /* 太字にして強調 */
+    border-bottom: 2px solid currentColor; /* 下線を表示 */
+    text-shadow: 0 0 5px currentColor; /* 少し発光させる */
+}
+@media (max-width: 600px) {
+    nav { justify-content: center; font-size: 0.9rem; }
+    nav a { margin: 0 10px; }
+}
+
+/* =========================================
+   共通コンテンツエリア (Layout)
+   ========================================= */
+.content {
+    padding: 100px 20px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+h1 {
+    border-bottom: 1px solid currentColor;
+    padding-bottom: 10px;
+    margin-bottom: 30px;
+}
+
+/* =========================================
+   音楽ページ専用 (Music)
+   ========================================= */
+.track-list { list-style: none; padding: 0; }
+.track-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 15px 0; border-bottom: 1px dashed rgba(255,255,255,0.3);
+}
+.track-info { display: flex; flex-direction: column; }
+.track-date { font-size: 0.8rem; opacity: 0.7; }
+.track-title { font-size: 1.2rem; font-weight: bold; margin-top: 5px; }
+.play-btn {
+    border: 1px solid currentColor; padding: 5px 15px;
+    text-decoration: none; color: inherit; transition: 0.3s;
+}
+.play-btn:hover { background-color: rgba(255,255,255,0.2); }
+
+/* =========================================
+   ゲームページ専用 (Game)
+   ========================================= */
+.game-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
+.game-card {
+    border: 1px solid currentColor; padding: 15px;
+    background: rgba(0,0,0,0.3); transition: transform 0.3s;
+}
+.game-card:hover { transform: translateY(-5px); background: rgba(255,255,255,0.1); }
+.game-img {
+    width: 100%; height: 150px; background-color: #333;
+    margin-bottom: 15px; display: flex; align-items: center; justify-content: center; opacity: 0.7;
+}
+.game-title { font-size: 1.2rem; font-weight: bold; margin-bottom: 10px; display: block; }
+.game-desc { font-size: 0.9rem; line-height: 1.5; opacity: 0.9; }
+.tags { margin-top: 10px; font-size: 0.8rem; opacity: 0.7; }
+
+/* =========================================
+   小説ページ専用 (Novel)
+   ========================================= */
+.novel-item { margin-bottom: 50px; }
+.novel-title { font-size: 1.5rem; font-weight: bold; margin-bottom: 10px; display: block; }
+.novel-meta { font-size: 0.8rem; opacity: 0.7; margin-bottom: 15px; display: block; }
+.novel-synopsis { line-height: 1.8; opacity: 0.9; margin-bottom: 15px; }
+.read-link {
+    display: inline-block; border-bottom: 1px solid currentColor;
+    text-decoration: none; color: inherit; padding-bottom: 2px;
+}
+.read-link:hover { opacity: 0.7; }
