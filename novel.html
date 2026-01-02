@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Novel Viewer</title>
+    <style>
+        body {
+            font-family: "Hiragino Mincho ProN", "Yu Mincho", "YuMincho", serif;
+            background-color: #fdfbf7;
+            color: #333;
+            line-height: 2.0;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 30px;
+            background-color: #fff;
+            box-shadow: 0 0 15px rgba(0,0,0,0.05);
+            min-height: 80vh;
+        }
+        #novel-content {
+            font-size: 1.1em;
+            text-align: justify;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        h2.chapter-title {
+            font-size: 1.6em;
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
+            margin-top: 40px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        ruby { font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+        rt { font-size: 0.6em; }
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 60px;
+            padding-top: 20px;
+            border-top: 1px dashed #ccc;
+        }
+        .btn {
+            text-decoration: none;
+            color: #555;
+            border: 1px solid #ccc;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        .btn:hover { background-color: #eee; }
+        .hidden { visibility: hidden; }
+        
+        /* エラーメッセージ用 */
+        .error-msg { text-align: center; color: #888; margin-top: 50px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div id="novel-content">読み込み中...</div>
+
+        <div class="nav-buttons">
+            <a href="#" id="prev-btn" class="btn hidden">← 前の話</a>
+            <a href="./index.html" class="btn">Topへ</a>
+            <a href="#" id="next-btn" class="btn">次の話 →</a>
+        </div>
+    </div>
+
+    <script>
+        // URLからパラメータを取得
+        // 例: novel.html?id=rabbit&p=1
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        // id=フォルダ名 (指定がなければエラー回避のため 'rabbit' に仮設定)
+        const storyId = urlParams.get('id'); 
+        // p=ページ数 (なければ1話)
+        const currentPage = parseInt(urlParams.get('p')) || 1;
+
+        const contentEl = document.getElementById('novel-content');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+
+        // storyIdがない場合のエラー処理
+        if (!storyId) {
+            contentEl.innerHTML = '<p class="error-msg">作品IDが指定されていません。<br>URLを確認してください。</p>';
+            nextBtn.classList.add('hidden');
+        } else {
+            // ファイルパス: ./novel/フォルダ名/ページ数.txt
+            const filePath = `./novel/${storyId}/${currentPage}.txt`;
+            loadNovel(filePath);
+        }
+
+        function loadNovel(path) {
+            fetch(path)
+                .then(response => {
+                    if (!response.ok) throw new Error("File not found");
+                    return response.text();
+                })
+                .then(text => {
+                    let formattedText = text;
+                    // ルビ、章タイトル、改ページの変換処理
+                    formattedText = formattedText.replace(/\[\[rb:(.+?)>(.+?)\]\]/g, '<ruby>$1<rt>$2</rt></ruby>');
+                    formattedText = formattedText.replace(/\[chapter:(.+?)\]/g, '<h2 class="chapter-title">$1</h2>');
+                    formattedText = formattedText.replace(/\[newpage\]/g, '<hr>');
+
+                    contentEl.innerHTML = formattedText;
+                    
+                    // タイトル更新
+                    const chapterMatch = text.match(/\[chapter:(.+?)\]/);
+                    const title = chapterMatch ? chapterMatch[1] : `第${currentPage}話`;
+                    document.title = title;
+
+                    setupNavigation();
+                })
+                .catch(error => {
+                    // ページが見つからない場合（最終話の次など）
+                    contentEl.innerHTML = `<p class="error-msg">ページが見つかりません。<br>ここが最新話か、物語の終わりです。</p>`;
+                    nextBtn.classList.add('hidden');
+                    // もし1ページ目でエラーならID間違いの可能性
+                    if(currentPage === 1) {
+                         contentEl.innerHTML = `<p class="error-msg">物語が見つかりません。<br>フォルダ名「${storyId}」は合っていますか？</p>`;
+                    }
+                });
+        }
+
+        function setupNavigation() {
+            // 前へボタン
+            if (currentPage > 1) {
+                prevBtn.href = `?id=${storyId}&p=${currentPage - 1}`;
+                prevBtn.classList.remove('hidden');
+            }
+
+            // 次へボタン (とりあえずリンクを設定し、クリックしてファイルがなければエラー表示になる)
+            nextBtn.href = `?id=${storyId}&p=${currentPage + 1}`;
+        }
+    </script>
+</body>
+</html>
