@@ -4,76 +4,89 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Web Novel Viewer</title>
+    <link rel="stylesheet" href="css/style.css">
+    
     <style>
-        body {
-            font-family: "Hiragino Mincho ProN", "Yu Mincho", "YuMincho", serif;
-            background-color: #000;
-            color: #ffffff;
-            line-height: 2.0;
-            margin: 0;
-            padding: 20px;
-        }
+        /* --- 小説ページ専用の微調整 --- */
+        
+        /* 共通デザイン(style.css)の設定を引き継ぐため、
+           ここで body の背景色や文字色は指定しません */
+
         .container {
             max-width: 800px;
             margin: 0 auto;
-            padding: 40px 30px;
-            background-color: #fff;
-            box-shadow: 0 0 15px rgba(0,0,0,0.05);
+            /* 上にナビゲーションバーが来るので余白を空ける */
+            padding: 100px 30px 40px; 
             min-height: 80vh;
         }
+
         #novel-content {
             font-size: 1.1em;
             text-align: justify;
             white-space: pre-wrap;
             word-wrap: break-word;
+            line-height: 2.0;
         }
+
+        /* 見出しの線も文字色に合わせる */
         h2.chapter-title {
             font-size: 1.6em;
-            border-bottom: 2px solid #333;
+            border-bottom: 2px solid currentColor;
             padding-bottom: 10px;
             margin-top: 40px;
             margin-bottom: 30px;
             text-align: center;
         }
+
         ruby { font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
         rt { font-size: 0.6em; }
+
+        /* ボタンのデザインも黒背景用に修正 */
         .nav-buttons {
             display: flex;
             justify-content: space-between;
             margin-top: 60px;
             padding-top: 20px;
-            border-top: 1px dashed #ccc;
+            border-top: 1px dashed rgba(255,255,255,0.3);
         }
         .btn {
             text-decoration: none;
-            color: #555;
-            border: 1px solid #ccc;
+            color: inherit; /* 白文字を引き継ぐ */
+            border: 1px solid currentColor;
             padding: 10px 20px;
             border-radius: 5px;
             transition: background 0.3s;
         }
-        .btn:hover { background-color: #eee; }
+        .btn:hover { 
+            background-color: rgba(255,255,255,0.2); 
+        }
         .hidden { visibility: hidden; }
         
-        /* エラーメッセージ用 */
-        .error-msg { text-align: center; color: #888; margin-top: 50px; }
+        .error-msg { text-align: center; opacity: 0.7; margin-top: 50px; }
     </style>
 </head>
 <body>
 
+    <nav>
+        <a href="index.html">/home</a>
+        <a href="music.html">/music</a>
+        <a href="game.html">/games</a>
+        <a href="novel.html" class="active">/novels</a>
+    </nav>
+
     <div class="container">
-        <div id="novel-content">読み込み中...</div>
+        <div id="novel-content">Loading story...</div>
 
         <div class="nav-buttons">
             <a href="#" id="prev-btn" class="btn hidden">← 前の話</a>
-            <a href="./index.html" class="btn">Topへ</a>
+            <a href="index.html#novel-section" class="btn">一覧へ</a>
             <a href="#" id="next-btn" class="btn">次の話 →</a>
         </div>
     </div>
 
+    <script src="js/main.js"></script>
     <script>
         // URLからパラメータを取得
-        // 例: novel.html?id=rabbit&p=1
         const urlParams = new URLSearchParams(window.location.search);
         
         // id=フォルダ名 (指定がなければエラー回避のため 'rabbit' に仮設定)
@@ -85,12 +98,10 @@
         const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
 
-        // storyIdがない場合のエラー処理
         if (!storyId) {
-            contentEl.innerHTML = '<p class="error-msg">作品IDが指定されていません。<br>URLを確認してください。</p>';
+            contentEl.innerHTML = '<p class="error-msg">作品IDが指定されていません。<br>URLから作品を選んでください。</p>';
             nextBtn.classList.add('hidden');
         } else {
-            // ファイルパス: ./novel/フォルダ名/ページ数.txt
             const filePath = `./novel/${storyId}/${currentPage}.txt`;
             loadNovel(filePath);
         }
@@ -110,7 +121,6 @@
 
                     contentEl.innerHTML = formattedText;
                     
-                    // タイトル更新
                     const chapterMatch = text.match(/\[chapter:(.+?)\]/);
                     const title = chapterMatch ? chapterMatch[1] : `第${currentPage}話`;
                     document.title = title;
@@ -118,10 +128,8 @@
                     setupNavigation();
                 })
                 .catch(error => {
-                    // ページが見つからない場合（最終話の次など）
                     contentEl.innerHTML = `<p class="error-msg">ページが見つかりません。<br>ここが最新話か、物語の終わりです。</p>`;
                     nextBtn.classList.add('hidden');
-                    // もし1ページ目でエラーならID間違いの可能性
                     if(currentPage === 1) {
                          contentEl.innerHTML = `<p class="error-msg">物語が見つかりません。<br>フォルダ名「${storyId}」は合っていますか？</p>`;
                     }
@@ -129,13 +137,10 @@
         }
 
         function setupNavigation() {
-            // 前へボタン
             if (currentPage > 1) {
                 prevBtn.href = `?id=${storyId}&p=${currentPage - 1}`;
                 prevBtn.classList.remove('hidden');
             }
-
-            // 次へボタン (とりあえずリンクを設定し、クリックしてファイルがなければエラー表示になる)
             nextBtn.href = `?id=${storyId}&p=${currentPage + 1}`;
         }
     </script>
