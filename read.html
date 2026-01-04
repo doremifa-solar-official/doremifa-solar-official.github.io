@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reader | While the world sleeps...</title>
+    <link rel="stylesheet" href="css/style.css">
+    
+    <style>
+        /* --- 読書画面専用の設定 --- */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 100px 30px 40px; 
+            min-height: 80vh;
+        }
+
+        #novel-content {
+            font-size: 1.1em;
+            text-align: justify;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            line-height: 2.0;
+        }
+
+        h2.chapter-title {
+            font-size: 1.6em;
+            border-bottom: 2px solid currentColor;
+            padding-bottom: 10px;
+            margin-top: 40px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        ruby { font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+        rt { font-size: 0.6em; }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 60px;
+            padding-top: 20px;
+            border-top: 1px dashed rgba(255,255,255,0.3);
+        }
+        .btn {
+            text-decoration: none;
+            color: inherit;
+            border: 1px solid currentColor;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        .btn:hover { background-color: rgba(255,255,255,0.2); }
+        .hidden { visibility: hidden; }
+        .error-msg { text-align: center; opacity: 0.7; margin-top: 50px; }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="index.html">/home</a>
+        <a href="music.html">/music</a>
+        <a href="game.html">/games</a>
+        <a href="novel.html" class="active">/novels</a>
+    </nav>
+
+    <div class="container">
+        <div id="novel-content">Loading story...</div>
+
+        <div class="nav-buttons">
+            <a href="#" id="prev-btn" class="btn hidden">← 前の話</a>
+            <a href="novel.html" class="btn">一覧へ</a>
+            <a href="#" id="next-btn" class="btn">次の話 →</a>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const storyId = urlParams.get('id'); 
+        const currentPage = parseInt(urlParams.get('p')) || 1;
+
+        const contentEl = document.getElementById('novel-content');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+
+        if (!storyId) {
+            contentEl.innerHTML = '<p class="error-msg">作品が選択されていません。<br><a href="novel.html">一覧に戻る</a></p>';
+            nextBtn.classList.add('hidden');
+        } else {
+            const filePath = `./novel/${storyId}/${currentPage}.txt`;
+            loadNovel(filePath);
+        }
+
+        function loadNovel(path) {
+            fetch(path)
+                .then(response => {
+                    if (!response.ok) throw new Error("File not found");
+                    return response.text();
+                })
+                .then(text => {
+                    let formattedText = text;
+                    formattedText = formattedText.replace(/\[\[rb:(.+?)>(.+?)\]\]/g, '<ruby>$1<rt>$2</rt></ruby>');
+                    formattedText = formattedText.replace(/\[chapter:(.+?)\]/g, '<h2 class="chapter-title">$1</h2>');
+                    formattedText = formattedText.replace(/\[newpage\]/g, '<hr>');
+
+                    contentEl.innerHTML = formattedText;
+                    
+                    const chapterMatch = text.match(/\[chapter:(.+?)\]/);
+                    const title = chapterMatch ? chapterMatch[1] : `第${currentPage}話`;
+                    document.title = title;
+
+                    setupNavigation();
+                })
+                .catch(error => {
+                    contentEl.innerHTML = `<p class="error-msg">ページが見つかりません。<br>ここが最新話か、物語の終わりです。</p>`;
+                    nextBtn.classList.add('hidden');
+                });
+        }
+
+        function setupNavigation() {
+            if (currentPage > 1) {
+                prevBtn.href = `?id=${storyId}&p=${currentPage - 1}`;
+                prevBtn.classList.remove('hidden');
+            }
+            nextBtn.href = `?id=${storyId}&p=${currentPage + 1}`;
+        }
+    </script>
+</body>
+</html>
