@@ -3,70 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web Novel Viewer</title>
+    <title>Novels | While the world sleeps...</title>
     <link rel="stylesheet" href="css/style.css">
-    
     <style>
-        /* --- 小説ページ専用の微調整 --- */
-        
-        /* 共通デザイン(style.css)の設定を引き継ぐため、
-           ここで body の背景色や文字色は指定しません */
-
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            /* 上にナビゲーションバーが来るので余白を空ける */
-            padding: 100px 30px 40px; 
-            min-height: 80vh;
+        /* 小説リスト専用のカードデザイン */
+        .novel-card {
+            border-left: 3px solid currentColor;
+            padding-left: 20px;
+            margin-bottom: 40px;
         }
-
-        #novel-content {
-            font-size: 1.1em;
-            text-align: justify;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            line-height: 2.0;
+        .novel-title {
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
         }
-
-        /* 見出しの線も文字色に合わせる */
-        h2.chapter-title {
-            font-size: 1.6em;
-            border-bottom: 2px solid currentColor;
-            padding-bottom: 10px;
-            margin-top: 40px;
-            margin-bottom: 30px;
-            text-align: center;
+        .novel-desc {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-bottom: 15px;
+            line-height: 1.6;
         }
-
-        ruby { font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
-        rt { font-size: 0.6em; }
-
-        /* ボタンのデザインも黒背景用に修正 */
-        .nav-buttons {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 60px;
-            padding-top: 20px;
-            border-top: 1px dashed rgba(255,255,255,0.3);
-        }
-        .btn {
-            text-decoration: none;
-            color: inherit; /* 白文字を引き継ぐ */
+        .read-btn {
+            display: inline-block;
             border: 1px solid currentColor;
-            padding: 10px 20px;
-            border-radius: 5px;
-            transition: background 0.3s;
+            padding: 5px 15px;
+            text-decoration: none;
+            color: inherit;
+            transition: 0.3s;
+            font-size: 0.9rem;
         }
-        .btn:hover { 
-            background-color: rgba(255,255,255,0.2); 
+        .read-btn:hover {
+            background-color: rgba(255,255,255,0.2);
+            letter-spacing: 1px;
         }
-        .hidden { visibility: hidden; }
-        
-        .error-msg { text-align: center; opacity: 0.7; margin-top: 50px; }
     </style>
 </head>
 <body>
-
     <nav>
         <a href="index.html">/home</a>
         <a href="music.html">/music</a>
@@ -74,75 +47,23 @@
         <a href="novel.html" class="active">/novels</a>
     </nav>
 
-    <div class="container">
-        <div id="novel-content">Loading story...</div>
+    <div class="content">
+        <h1>/novel_works</h1>
+        <p style="margin-bottom: 50px;">
+            pixivに公開した小説の設定や、書き下ろしの小話を掲載しています。
+        </p>
 
-        <div class="nav-buttons">
-            <a href="#" id="prev-btn" class="btn hidden">← 前の章</a>
-            <a href="index.html#novel-section" class="btn">一覧へ</a>
-            <a href="#" id="next-btn" class="btn">次の章 →</a>
+        <div class="novel-card">
+            <span class="novel-title">泡沫二溺レルウサギ</span>
+            <p class="novel-desc">
+                ここに作品のあらすじが入ります。<br>
+                テキストファイルから読み込む形式のサンプルです。
+            </p>
+            <a href="read.html?id=rabbit&p=1" class="read-btn">>> Read Story</a>
         </div>
-    </div>
+
+        </div>
 
     <script src="js/main.js"></script>
-    <script>
-        // URLからパラメータを取得
-        const urlParams = new URLSearchParams(window.location.search);
-        
-        // id=フォルダ名 (指定がなければエラー回避のため 'rabbit' に仮設定)
-        const storyId = urlParams.get('id'); 
-        // p=ページ数 (なければ1話)
-        const currentPage = parseInt(urlParams.get('p')) || 1;
-
-        const contentEl = document.getElementById('novel-content');
-        const prevBtn = document.getElementById('prev-btn');
-        const nextBtn = document.getElementById('next-btn');
-
-        if (!storyId) {
-            contentEl.innerHTML = '<p class="error-msg">作品IDが指定されていません。<br>URLから作品を選んでください。</p>';
-            nextBtn.classList.add('hidden');
-        } else {
-            const filePath = `./novel/${storyId}/${currentPage}.txt`;
-            loadNovel(filePath);
-        }
-
-        function loadNovel(path) {
-            fetch(path)
-                .then(response => {
-                    if (!response.ok) throw new Error("File not found");
-                    return response.text();
-                })
-                .then(text => {
-                    let formattedText = text;
-                    // ルビ、章タイトル、改ページの変換処理
-                    formattedText = formattedText.replace(/\[\[rb:(.+?)>(.+?)\]\]/g, '<ruby>$1<rt>$2</rt></ruby>');
-                    formattedText = formattedText.replace(/\[chapter:(.+?)\]/g, '<h2 class="chapter-title">$1</h2>');
-                    formattedText = formattedText.replace(/\[newpage\]/g, '<hr>');
-
-                    contentEl.innerHTML = formattedText;
-                    
-                    const chapterMatch = text.match(/\[chapter:(.+?)\]/);
-                    const title = chapterMatch ? chapterMatch[1] : `第${currentPage}話`;
-                    document.title = title;
-
-                    setupNavigation();
-                })
-                .catch(error => {
-                    contentEl.innerHTML = `<p class="error-msg">ページが見つかりません。<br>ここが最新話か、物語の終わりです。</p>`;
-                    nextBtn.classList.add('hidden');
-                    if(currentPage === 1) {
-                         contentEl.innerHTML = `<p class="error-msg">物語が見つかりません。<br>フォルダ名「${storyId}」は合っていますか？</p>`;
-                    }
-                });
-        }
-
-        function setupNavigation() {
-            if (currentPage > 1) {
-                prevBtn.href = `?id=${storyId}&p=${currentPage - 1}`;
-                prevBtn.classList.remove('hidden');
-            }
-            nextBtn.href = `?id=${storyId}&p=${currentPage + 1}`;
-        }
-    </script>
 </body>
 </html>
