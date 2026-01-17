@@ -5,6 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Music | While the world sleeps...</title>
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* 準備中メッセージ用の簡易スタイル */
+        .coming-soon {
+            margin-top: 50px;
+            text-align: center;
+            opacity: 0.7;
+            font-family: monospace;
+        }
+    </style>
 </head>
 <body>
     <nav>
@@ -17,22 +26,25 @@
     <div class="content">
         <h1>/music_tracks</h1>
         
+        <div class="coming-soon">
+            <p>No tracks available yet...</p>
+            <p>曲ができたら、ここに表示します。</p>
+        </div>
+
+        を消して、
+        このリストを表示させてください。
+        
         <ul class="track-list">
             <li class="track-item">
                 <div class="track-info">
-                    <span class="track-date">[2024.12.25]</span>
-                    <span class="track-title">Midnight Coding</span>
-                </div>
-                <a href="#" class="play-btn">Play ▶</a>
-            </li>
-            <li class="track-item">
-                <div class="track-info">
-                    <span class="track-date">[2024.11.08]</span>
-                    <span class="track-title">Error 404 Love Not Found</span>
+                    <span class="track-date">[YYYY.MM.DD]</span>
+                    <span class="track-title">ここに曲のタイトル</span>
                 </div>
                 <a href="#" class="play-btn">Play ▶</a>
             </li>
         </ul>
+        -->
+
     </div>
 
     <script src="js/main.js"></script>
