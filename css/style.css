@@ -50,15 +50,14 @@ nav a:hover {
     text-decoration: underline;
 }
 
-/* --- css/style.css に追記 --- */
-
 /* 現在開いているページのリンクスタイル */
 nav a.active {
-    opacity: 1;              /* 透明度をなくしてくっきり表示 */
-    font-weight: bold;       /* 太字にして強調 */
-    border-bottom: 2px solid currentColor; /* 下線を表示 */
-    text-shadow: 0 0 5px currentColor; /* 少し発光させる */
+    opacity: 1;
+    font-weight: bold;
+    border-bottom: 2px solid currentColor;
+    text-shadow: 0 0 5px currentColor;
 }
+
 @media (max-width: 600px) {
     nav { justify-content: center; font-size: 0.9rem; }
     nav a { margin: 0 10px; }
@@ -125,3 +124,150 @@ h1 {
     text-decoration: none; color: inherit; padding-bottom: 2px;
 }
 .read-link:hover { opacity: 0.7; }
+/* =========================================
+   Rabbit専用テーマ (Round & Cute + Face Fixed)
+   ========================================= */
+
+/* --- 全体の配色 --- */
+.theme-rabbit {
+    background-color: #1a1a1a;
+    color: #f0f0f0;
+}
+
+/* リンク色 */
+.theme-rabbit a,
+.theme-rabbit .btn {
+    color: #ff9eb5;
+    border-color: #ff9eb5;
+}
+.theme-rabbit a:hover {
+    color: #fff;
+    text-shadow: 0 0 5px #ff9eb5;
+}
+
+/* 文字の装飾を消す */
+.theme-rabbit::before {
+    content: none;
+    display: none;
+}
+
+/* -------------------------------------------
+   ドット絵ウサギ本体 (::after)
+   ------------------------------------------- */
+.theme-rabbit::after {
+    content: '';
+    display: block;
+    position: fixed;
+    bottom: 30px;
+    right: 50px;
+    z-index: 9999;
+
+    /* ドットの大きさ（3px単位） */
+    width: 3px;
+    height: 3px;
+
+    color: transparent;
+
+    /* 重要：box-shadowは「上に書いたもの」が手前に表示されます。
+      順番：【顔のパーツ】→【輪郭】→【体の色】→【草】
+    */
+    box-shadow:
+        /* === 1. 顔のパーツ（最前面） === */
+        -9px -21px 0 0 #000,  /* 左目 */
+         9px -21px 0 0 #000,  /* 右目 */
+         0px -19px 0 0 #000,  /* 鼻（位置調整済） */
+         0px -16px 0 0 #ff8da1, /* 口 */
+        -12px -18px 0 0 #ffb7b2, /* 左ほっぺ */
+         12px -18px 0 0 #ffb7b2, /* 右ほっぺ */
+
+        /* === 2. 輪郭（黒いフチ） === */
+        /* 耳の輪郭 */
+        -15px -48px 0 0 #000, -12px -48px 0 0 #000, -9px -48px 0 0 #000,
+        -18px -45px 0 0 #000, -6px -45px 0 0 #000,
+        -18px -42px 0 0 #000, -6px -42px 0 0 #000,
+        -18px -39px 0 0 #000, -6px -39px 0 0 #000,
+        -18px -36px 0 0 #000, -6px -36px 0 0 #000,
+        -18px -33px 0 0 #000, -6px -33px 0 0 #000,
+
+        9px -48px 0 0 #000, 12px -48px 0 0 #000, 15px -48px 0 0 #000,
+        6px -45px 0 0 #000, 18px -45px 0 0 #000,
+        6px -42px 0 0 #000, 18px -42px 0 0 #000,
+        6px -39px 0 0 #000, 18px -39px 0 0 #000,
+        6px -36px 0 0 #000, 18px -36px 0 0 #000,
+        6px -33px 0 0 #000, 18px -33px 0 0 #000,
+
+        /* 顔・体の輪郭 */
+        -15px -30px 0 0 #000, 15px -30px 0 0 #000, /* 頭頂部の端 */
+        -18px -27px 0 0 #000, 18px -27px 0 0 #000,
+        -18px -24px 0 0 #000, 18px -24px 0 0 #000,
+        -18px -21px 0 0 #000, 18px -21px 0 0 #000,
+        -18px -18px 0 0 #000, 18px -18px 0 0 #000,
+        -15px -15px 0 0 #000, 15px -15px 0 0 #000,
+
+        -12px -12px 0 0 #000, 12px -12px 0 0 #000, /* 首元 */
+        -15px -9px 0 0 #000, 15px -9px 0 0 #000,
+        -15px -6px 0 0 #000, 18px -6px 0 0 #000,
+        -15px -3px 0 0 #000, 18px -3px 0 0 #000,
+
+        -12px 0px 0 0 #000, -6px 0px 0 0 #000, /* 足の区切り */
+        6px 0px 0 0 #000, 12px 0px 0 0 #000,
+        18px 0px 0 0 #000, 21px 0px 0 0 #000, /* しっぽ輪郭 */
+
+        -9px 3px 0 0 #000, -3px 3px 0 0 #000, 0px 3px 0 0 #000, 3px 3px 0 0 #000, 9px 3px 0 0 #000, 15px 3px 0 0 #000, /* 底面 */
+
+
+        /* === 3. 中身の色（白・ピンク） === */
+        /* 耳の中 */
+        -12px -42px 0 0 #ffb7b2, -12px -39px 0 0 #ffb7b2, -12px -36px 0 0 #ffb7b2,
+        12px -42px 0 0 #ffb7b2, 12px -39px 0 0 #ffb7b2, 12px -36px 0 0 #ffb7b2,
+
+        /* 全身の白（範囲をまとめて塗りつぶし） */
+        /* 耳の白地 */
+        -15px -45px 0 0 #fff, -12px -45px 0 0 #fff, -9px -45px 0 0 #fff,
+        -15px -42px 0 0 #fff, -9px -42px 0 0 #fff,
+        -15px -39px 0 0 #fff, -9px -39px 0 0 #fff,
+        -15px -36px 0 0 #fff, -9px -36px 0 0 #fff,
+        -15px -33px 0 0 #fff, -12px -33px 0 0 #fff, -9px -33px 0 0 #fff,
+
+        9px -45px 0 0 #fff, 12px -45px 0 0 #fff, 15px -45px 0 0 #fff,
+        9px -42px 0 0 #fff, 15px -42px 0 0 #fff,
+        9px -39px 0 0 #fff, 15px -39px 0 0 #fff,
+        9px -36px 0 0 #fff, 15px -36px 0 0 #fff,
+        9px -33px 0 0 #fff, 12px -33px 0 0 #fff, 15px -33px 0 0 #fff,
+
+        /* 頭の白 */
+        -12px -30px 0 0 #fff, -9px -30px 0 0 #fff, -6px -30px 0 0 #fff, -3px -30px 0 0 #fff, 0px -30px 0 0 #fff, 3px -30px 0 0 #fff, 6px -30px 0 0 #fff, 9px -30px 0 0 #fff, 12px -30px 0 0 #fff,
+
+        -15px -27px 0 0 #fff, -12px -27px 0 0 #fff, -9px -27px 0 0 #fff, -6px -27px 0 0 #fff, -3px -27px 0 0 #fff, 0px -27px 0 0 #fff, 3px -27px 0 0 #fff, 6px -27px 0 0 #fff, 9px -27px 0 0 #fff, 12px -27px 0 0 #fff, 15px -27px 0 0 #fff,
+        -15px -24px 0 0 #fff, -12px -24px 0 0 #fff, -9px -24px 0 0 #fff, -6px -24px 0 0 #fff, -3px -24px 0 0 #fff, 0px -24px 0 0 #fff, 3px -24px 0 0 #fff, 6px -24px 0 0 #fff, 9px -24px 0 0 #fff, 12px -24px 0 0 #fff, 15px -24px 0 0 #fff,
+        -15px -21px 0 0 #fff, -12px -21px 0 0 #fff, -9px -21px 0 0 #fff, -6px -21px 0 0 #fff, -3px -21px 0 0 #fff, 0px -21px 0 0 #fff, 3px -21px 0 0 #fff, 6px -21px 0 0 #fff, 9px -21px 0 0 #fff, 12px -21px 0 0 #fff, 15px -21px 0 0 #fff,
+        -15px -18px 0 0 #fff, -12px -18px 0 0 #fff, -9px -18px 0 0 #fff, -6px -18px 0 0 #fff, -3px -18px 0 0 #fff, 0px -18px 0 0 #fff, 3px -18px 0 0 #fff, 6px -18px 0 0 #fff, 9px -18px 0 0 #fff, 12px -18px 0 0 #fff, 15px -18px 0 0 #fff,
+        -12px -15px 0 0 #fff, -9px -15px 0 0 #fff, -6px -15px 0 0 #fff, -3px -15px 0 0 #fff, 0px -15px 0 0 #fff, 3px -15px 0 0 #fff, 6px -15px 0 0 #fff, 9px -15px 0 0 #fff, 12px -15px 0 0 #fff,
+
+        /* 体の白 */
+        -9px -12px 0 0 #fff, -6px -12px 0 0 #fff, -3px -12px 0 0 #fff, 0px -12px 0 0 #fff, 3px -12px 0 0 #fff, 6px -12px 0 0 #fff, 9px -12px 0 0 #fff,
+        -12px -9px 0 0 #fff, -9px -9px 0 0 #fff, -6px -9px 0 0 #fff, -3px -9px 0 0 #fff, 0px -9px 0 0 #fff, 3px -9px 0 0 #fff, 6px -9px 0 0 #fff, 9px -9px 0 0 #fff, 12px -9px 0 0 #fff,
+        -12px -6px 0 0 #fff, -9px -6px 0 0 #fff, -6px -6px 0 0 #fff, -3px -6px 0 0 #fff, 0px -6px 0 0 #fff, 3px -6px 0 0 #fff, 6px -6px 0 0 #fff, 9px -6px 0 0 #fff, 12px -6px 0 0 #fff, 15px -6px 0 0 #fff,
+        -12px -3px 0 0 #fff, -9px -3px 0 0 #fff, -6px -3px 0 0 #fff, -3px -3px 0 0 #fff, 0px -3px 0 0 #fff, 3px -3px 0 0 #fff, 6px -3px 0 0 #fff, 9px -3px 0 0 #fff, 12px -3px 0 0 #fff, 15px -3px 0 0 #fff,
+
+        -9px 0px 0 0 #fff, -3px 0px 0 0 #fff, 0px 0px 0 0 #fff, 3px 0px 0 0 #fff, 9px 0px 0 0 #fff, 15px 0px 0 0 #fff, /* 足先としっぽ */
+
+        /* === 4. 足元の草 === */
+        -15px 6px 0 0 #8bc34a, -12px 6px 0 0 #8bc34a, -9px 6px 0 0 #8bc34a, -6px 6px 0 0 #8bc34a, -3px 6px 0 0 #8bc34a,
+        0px 6px 0 0 #8bc34a, 3px 6px 0 0 #8bc34a, 6px 6px 0 0 #8bc34a, 9px 6px 0 0 #8bc34a, 12px 6px 0 0 #8bc34a, 15px 6px 0 0 #8bc34a, 18px 6px 0 0 #8bc34a;
+
+    /* ドットをクッキリさせる */
+    image-rendering: pixelated;
+
+    /* 大きさ調整 */
+    transform: scale(2.5);
+    transform-origin: bottom right;
+
+    /* アニメーション：優しく揺れる */
+    animation: soft-bounce 2s infinite ease-in-out;
+}
+
+@keyframes soft-bounce {
+    0%, 100% { transform: scale(2.5) translateY(0); }
+    50% { transform: scale(2.5) translateY(-3px); }
+}

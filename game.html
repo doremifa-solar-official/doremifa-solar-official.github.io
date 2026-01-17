@@ -5,6 +5,90 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Games | While the world sleeps...</title>
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* --- ニュースリスト（横長カード）のデザイン --- */
+        .news-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .news-card {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            height: 100px; /* カードの高さ */
+        }
+
+        .news-card:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px); /* ホバーで少し右に動く */
+        }
+
+        /* サムネイル画像（顔付近を中心にトリミング） */
+        .news-thumb {
+            width: 100px;
+            height: 100%;
+            object-fit: cover; /* 枠いっぱいに広げる */
+            object-position: top center; /* 上の方（顔）を表示 */
+            background-color: #000;
+            flex-shrink: 0; /* 縮まないようにする */
+        }
+
+        .news-info {
+            padding: 0 20px;
+            flex-grow: 1;
+        }
+
+        .news-date {
+            display: block;
+            font-size: 0.8rem;
+            color: #81ecec; /* 日付の色 */
+            margin-bottom: 5px;
+            font-family: monospace;
+        }
+
+        .news-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            display: block;
+        }
+
+        /* --- 記事詳細ページ（最初は隠しておく） --- */
+        .article-view {
+            display: none; /* デフォルト非表示 */
+            animation: fadeIn 0.5s;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #81ecec;
+            text-decoration: none;
+            cursor: pointer;
+            border: 1px solid #81ecec;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            transition: 0.3s;
+        }
+        .back-btn:hover { background: rgba(129, 236, 236, 0.1); }
+
+        /* --- モーダル（画像拡大） --- */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%; background: rgba(0,0,0,0.9);
+            z-index: 1000; justify-content: center; align-items: center; cursor: zoom-out;
+        }
+        .modal-overlay.active { display: flex; animation: fadeIn 0.3s; }
+        .modal-img { max-width: 90%; max-height: 90%; box-shadow: 0 0 20px rgba(255,255,255,0.2); }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
 </head>
 <body>
     <nav>
@@ -15,23 +99,131 @@
     </nav>
 
     <div class="content">
-        <h1>/game_projects</h1>
-        <div class="game-grid">
-            <div class="game-card">
-                <div class="game-img">[SCREENSHOT]</div>
-                <span class="game-title">Project: ALICE</span>
-                <p class="game-desc">不思議の国のアリスをモチーフにしたハッキングシミュレーター。</p>
-                <div class="tags">#Puzzle #Cyberpunk</div>
+        <h1>/development_log</h1>
+
+        <div id="news-list" class="news-container">
+            
+            <div class="news-card" onclick="openArticle('article-2')">
+                <img src="assets/img_game/leo_c.png" class="news-thumb" alt="サムネイル">
+                <div class="news-info">
+                    <span class="news-date">2026.02.XX</span>
+                    <span class="news-title">【キャラデザ公開】主人公の親友「レオ」の立ち絵</span>
+                </div>
             </div>
-            <div class="game-card">
-                <div class="game-img">[SCREENSHOT]</div>
-                <span class="game-title">Last Server</span>
-                <p class="game-desc">人類最後のサーバーを守り抜くタワーディフェンスゲーム。</p>
-                <div class="tags">#Strategy #Sci-Fi</div>
+
+            <div class="news-card" onclick="openArticle('article-1')">
+                <img src="assets/img_game/finn_c.png" class="news-thumb" alt="サムネイル">
+                <div class="news-info">
+                    <span class="news-date">2026.01.16</span>
+                    <span class="news-title">【キャラデザ公開】主人公の親友「フィン」の立ち絵</span>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="article-2" class="article-view">
+            <div style="max-width: 600px; margin: 0 auto;">
+                
+                <div onclick="closeArticle()" class="back-btn">← Back to List</div>
+
+                <div style="text-align: center;">
+                    <p style="opacity: 0.7; font-family: monospace;">2026.01.17</p>
+                    <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.3); margin: 20px 0;">
+
+                    <div style="margin: 30px 0;">
+                        <img src="assets/img_game/leo_c.png" alt="レオの立ち絵" 
+                             onclick="openModal(this.src)"
+                             style="width: 25%; max-width: 150px; height: auto; border-radius: 5px; cursor: zoom-in;">
+                        <p style="margin-top: 10px; font-size: 0.9rem; color: #aaa;">レオの立ち絵</p>
+                    </div>
+
+                    <div style="text-align: left; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 8px; margin-bottom: 30px; line-height: 1.8;">
+                        <p style="margin: 0;">
+			キャラクターたち絵公開第二弾！<br>
+
+                            主人公のもう一人の親友であるレオです。<br>
+			    フィンとは正反対に危険や冒険が大好きな性格で、主人公たちを振り回します。<br>
+			    神性工学の技術はピカイチ。
+                        </p>
+                    </div>
+
+                    <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.3); margin: 40px 0 20px;">
+                    <p style="font-weight: bold; font-size: 1.1rem;">アルセリア王国製作委員会</p>
+                </div>
             </div>
         </div>
+
+        <div id="article-1" class="article-view">
+            <div style="max-width: 600px; margin: 0 auto;">
+                
+                <div onclick="closeArticle()" class="back-btn">← Back to List</div>
+
+                <div style="text-align: center;">
+                    <p style="opacity: 0.7; font-family: monospace;">2026.01.16</p>
+                    <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.3); margin: 20px 0;">
+
+                    <div style="margin: 30px 0;">
+                        <img src="assets/img_game/finn_c.png" alt="フィンの立ち絵" 
+                             onclick="openModal(this.src)"
+                             style="width: 25%; max-width: 150px; height: auto; border-radius: 5px; box-shadow: 0 0 15px rgba(255,255,255,0.1); cursor: zoom-in; transition: transform 0.2s;">
+                        <p style="margin-top: 10px; font-size: 0.9rem; color: #aaa;">フィンの立ち絵</p>
+                    </div>
+
+                    <div style="text-align: left; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 8px; margin-bottom: 30px; line-height: 1.8;">
+                        <p style="margin: 0;">
+			キャラクター立ち絵公開第一弾！<br>
+			主人公の親友であるフィンです。<br>
+			冷静沈着で主人公たちをサポートします。<br>
+			チョット怖がりな一面も...
+                        </p>
+                    </div>
+
+                    <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.3); margin: 40px 0 20px;">
+                    <p style="font-weight: bold; font-size: 1.1rem;">アルセリア王国製作委員会</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="imageModal" class="modal-overlay" onclick="closeModal()">
+        <img id="modalImg" class="modal-img" src="">
     </div>
 
     <script src="js/main.js"></script>
+    <script>
+        // --- 画面切り替えのスクリプト ---
+        const newsList = document.getElementById('news-list');
+
+        // 記事を開く
+        function openArticle(articleId) {
+            // リストを隠す
+            newsList.style.display = 'none';
+            // 指定された記事を表示する
+            document.getElementById(articleId).style.display = 'block';
+            // 画面トップへスクロール
+            window.scrollTo(0, 0);
+        }
+
+        // 記事を閉じてリストに戻る
+        function closeArticle() {
+            // 全ての記事詳細を隠す
+            const articles = document.querySelectorAll('.article-view');
+            articles.forEach(art => art.style.display = 'none');
+            // リストを表示する
+            newsList.style.display = 'block';
+        }
+
+        // --- 画像拡大のスクリプト ---
+        const modal = document.getElementById('imageModal');
+        const modalImg = document.getElementById('modalImg');
+        function openModal(src) {
+            modalImg.src = src;
+            modal.classList.add('active');
+        }
+        function closeModal() {
+            modal.classList.remove('active');
+        }
+    </script>
 </body>
 </html>

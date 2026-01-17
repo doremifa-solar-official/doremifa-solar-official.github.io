@@ -78,6 +78,7 @@
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         const storyId = urlParams.get('id'); 
+	if (storyId) document.body.classList.add('theme-' + storyId);
         const currentPage = parseInt(urlParams.get('p')) || 1;
 
         const contentEl = document.getElementById('novel-content');
