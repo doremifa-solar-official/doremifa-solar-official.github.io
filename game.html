@@ -6,10 +6,20 @@
     <title>Games | While the world sleeps...</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
+        /* --- 基本設定 --- */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #1a1a1a;
+            color: #eee;
+            font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+        }
+
         /* --- ニュースリスト（横長カード）のデザイン --- */
         .news-container {
             max-width: 800px;
             margin: 0 auto;
+            padding: 0 10px;
         }
 
         .news-card {
@@ -22,33 +32,40 @@
             cursor: pointer;
             transition: all 0.3s ease;
             overflow: hidden;
-            height: 100px; /* カードの高さ */
+            min-height: 100px;
         }
 
         .news-card:hover {
             background: rgba(255, 255, 255, 0.1);
-            transform: translateX(5px); /* ホバーで少し右に動く */
+            transform: translateX(5px);
+            border-color: #81ecec;
         }
 
-        /* サムネイル画像（顔付近を中心にトリミング） */
         .news-thumb {
             width: 100px;
-            height: 100%;
-            object-fit: cover; /* 枠いっぱいに広げる */
-            object-position: top center; /* 上の方（顔）を表示 */
+            height: 100px;
+            object-fit: cover;
+            object-position: center top; /* デフォルトは上寄せ（キャラ用） */
             background-color: #000;
-            flex-shrink: 0; /* 縮まないようにする */
+            flex-shrink: 0;
+        }
+
+        /* ロゴなど全体を表示したい画像用クラス（今回は未使用ですが残しておきます） */
+        .news-thumb.contain {
+            object-fit: contain;
+            padding: 10px;
+            box-sizing: border-box;
         }
 
         .news-info {
-            padding: 0 20px;
+            padding: 15px 20px;
             flex-grow: 1;
         }
 
         .news-date {
             display: block;
             font-size: 0.8rem;
-            color: #81ecec; /* 日付の色 */
+            color: #81ecec;
             margin-bottom: 5px;
             font-family: monospace;
         }
@@ -57,12 +74,14 @@
             font-size: 1.1rem;
             font-weight: bold;
             display: block;
+            line-height: 1.4;
         }
 
-        /* --- 記事詳細ページ（最初は隠しておく） --- */
+        /* --- 記事詳細ページ --- */
         .article-view {
-            display: none; /* デフォルト非表示 */
+            display: none;
             animation: fadeIn 0.5s;
+            padding: 0 15px;
         }
 
         .back-btn {
@@ -72,29 +91,83 @@
             text-decoration: none;
             cursor: pointer;
             border: 1px solid #81ecec;
-            padding: 5px 15px;
+            padding: 8px 20px;
             border-radius: 20px;
             font-size: 0.9rem;
             transition: 0.3s;
+            background: rgba(0,0,0,0.3);
         }
-        .back-btn:hover { background: rgba(129, 236, 236, 0.1); }
+        .back-btn:hover { 
+            background: rgba(129, 236, 236, 0.2); 
+            color: #fff;
+        }
 
-        /* --- モーダル（画像拡大） --- */
+        .article-view h3 {
+            font-size: 1.2rem;
+            margin-top: 40px;
+            margin-bottom: 15px;
+            color: #fff;
+            border-left: 4px solid #81ecec;
+            padding-left: 12px;
+            background: linear-gradient(90deg, rgba(129, 236, 236, 0.1) 0%, transparent 100%);
+        }
+
+        .color-types {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px 20px 20px 30px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        .color-types li { margin-bottom: 12px; }
+        .color-types li:last-child { margin-bottom: 0; }
+
+        nav {
+            padding: 20px;
+            text-align: center;
+        }
+        nav a {
+            color: #ccc;
+            text-decoration: none;
+            margin: 0 10px;
+            font-family: monospace;
+            transition: color 0.3s;
+        }
+        nav a:hover { color: #81ecec; }
+
+        .content {
+            padding-bottom: 50px;
+        }
+        h1 {
+            text-align: center;
+            font-family: monospace;
+            margin-bottom: 40px;
+            color: #fff;
+        }
+
+        /* --- モーダル --- */
         .modal-overlay {
             display: none; position: fixed; top: 0; left: 0;
             width: 100%; height: 100%; background: rgba(0,0,0,0.9);
             z-index: 1000; justify-content: center; align-items: center; cursor: zoom-out;
+            backdrop-filter: blur(5px);
         }
         .modal-overlay.active { display: flex; animation: fadeIn 0.3s; }
-        .modal-img { max-width: 90%; max-height: 90%; box-shadow: 0 0 20px rgba(255,255,255,0.2); }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal-img { 
+            max-width: 90%; 
+            max-height: 90%; 
+            box-shadow: 0 0 20px rgba(129, 236, 236, 0.2); 
+            border-radius: 4px;
+        }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
     <nav>
         <a href="index.html">/home</a>
         <a href="music.html">/music</a>
-        <a href="game.html">/games</a>
+        <a href="game.html" style="color: #81ecec;">/games</a>
         <a href="novel.html">/novels</a>
     </nav>
 
@@ -119,34 +192,38 @@
                 </div>
             </div>
 
+            <div class="news-card" onclick="openArticle('article-3')">
+                <img src="assets/img_game/school_building_day_spring.png" class="news-thumb" alt="サムネイル" style="object-position: center;">
+                <div class="news-info">
+                    <span class="news-date">2026.01.02</span>
+                    <span class="news-title">【Project Start】『アルセリア王国』プロジェクト始動</span>
+                </div>
+            </div>      
+
         </div>
 
         <div id="article-2" class="article-view">
             <div style="max-width: 600px; margin: 0 auto;">
-                
                 <div onclick="closeArticle()" class="back-btn">← Back to List</div>
-
                 <div style="text-align: center;">
                     <p style="opacity: 0.7; font-family: monospace;">2026.01.17</p>
                     <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.3); margin: 20px 0;">
-
+                    
                     <div style="margin: 30px 0;">
                         <img src="assets/img_game/leo_c.png" alt="レオの立ち絵" 
                              onclick="openModal(this.src)"
-                             style="width: 25%; max-width: 150px; height: auto; border-radius: 5px; cursor: zoom-in;">
+                             style="width: 100%; max-width: 200px; height: auto; border-radius: 5px; cursor: zoom-in; transition: transform 0.2s;">
                         <p style="margin-top: 10px; font-size: 0.9rem; color: #aaa;">レオの立ち絵</p>
                     </div>
 
-                    <div style="text-align: left; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 8px; margin-bottom: 30px; line-height: 1.8;">
+                    <div style="text-align: left; background: rgba(255,255,255,0.05); padding: 25px; border-radius: 8px; margin-bottom: 30px; line-height: 1.8;">
                         <p style="margin: 0;">
-			キャラクターたち絵公開第二弾！<br>
-
-                            主人公のもう一人の親友であるレオです。<br>
-			    フィンとは正反対に危険や冒険が大好きな性格で、主人公たちを振り回します。<br>
-			    神性工学の技術はピカイチ。
+                            キャラクターたち絵公開第二弾！<br>
+                            主人公のもう一人の親友であるレオです。<br><br>
+                            フィンとは正反対に危険や冒険が大好きな性格で、主人公たちを振り回します。<br>
+                            神性工学の技術はピカイチ。
                         </p>
                     </div>
-
                     <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.3); margin: 40px 0 20px;">
                     <p style="font-weight: bold; font-size: 1.1rem;">アルセリア王国製作委員会</p>
                 </div>
@@ -155,27 +232,76 @@
 
         <div id="article-1" class="article-view">
             <div style="max-width: 600px; margin: 0 auto;">
+                <div onclick="closeArticle()" class="back-btn">← Back to List</div>
+                <div style="text-align: center;">
+                    <p style="opacity: 0.7; font-family: monospace;">2026.01.16</p>
+                    <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.3); margin: 20px 0;">
+                    
+                    <div style="margin: 30px 0;">
+                        <img src="assets/img_game/finn_c.png" alt="フィンの立ち絵" 
+                             onclick="openModal(this.src)"
+                             style="width: 100%; max-width: 200px; height: auto; border-radius: 5px; cursor: zoom-in; transition: transform 0.2s;">
+                        <p style="margin-top: 10px; font-size: 0.9rem; color: #aaa;">フィンの立ち絵</p>
+                    </div>
+
+                    <div style="text-align: left; background: rgba(255,255,255,0.05); padding: 25px; border-radius: 8px; margin-bottom: 30px; line-height: 1.8;">
+                        <p style="margin: 0;">
+                            キャラクター立ち絵公開第一弾！<br>
+                            主人公の親友であるフィンです。<br><br>
+                            冷静沈着で主人公たちをサポートします。<br>
+                            チョット怖がりな一面も...
+                        </p>
+                    </div>
+                    <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.3); margin: 40px 0 20px;">
+                    <p style="font-weight: bold; font-size: 1.1rem;">アルセリア王国製作委員会</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="article-3" class="article-view">
+            <div style="max-width: 700px; margin: 0 auto;">
                 
                 <div onclick="closeArticle()" class="back-btn">← Back to List</div>
 
                 <div style="text-align: center;">
-                    <p style="opacity: 0.7; font-family: monospace;">2026.01.16</p>
+                    <p style="opacity: 0.7; font-family: monospace;">2026.01.02</p>
+                    <h2 style="margin: 10px 0 30px; font-size: 1.5rem; line-height: 1.4;">
+                        魔法と科学が融合する王国ファンタジー<br>
+                        『アルセリア王国』プロジェクト始動
+                    </h2>
                     <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.3); margin: 20px 0;">
 
-                    <div style="margin: 30px 0;">
-                        <img src="assets/img_game/finn_c.png" alt="フィンの立ち絵" 
-                             onclick="openModal(this.src)"
-                             style="width: 25%; max-width: 150px; height: auto; border-radius: 5px; box-shadow: 0 0 15px rgba(255,255,255,0.1); cursor: zoom-in; transition: transform 0.2s;">
-                        <p style="margin-top: 10px; font-size: 0.9rem; color: #aaa;">フィンの立ち絵</p>
-                    </div>
+                    <div style="text-align: left; line-height: 1.9; color: #ccc;">
+                        
+                        <p>新たな物語の舞台は、古の魔法と最先端技術が火花を散らす「アルセリア王国」。<br>
+                        本日、その壮大な世界観と、物語の鍵を握る主人公の情報を初公開いたします。</p>
 
-                    <div style="text-align: left; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 8px; margin-bottom: 30px; line-height: 1.8;">
-                        <p style="margin: 0;">
-			キャラクター立ち絵公開第一弾！<br>
-			主人公の親友であるフィンです。<br>
-			冷静沈着で主人公たちをサポートします。<br>
-			チョット怖がりな一面も...
-                        </p>
+                        <h3>◆ 世界観：神性工学と3つの色</h3>
+                        <p>舞台となるのは、歴史ある魔法文明と、革新的なテクノロジーが融合した国、アルセリア。<br>
+                        その中心に位置するのが、数多の天才・異端児・英雄を輩出してきた最高学府「王立ルーメン学院」です。</p>
+                        <p>ここでは、生徒たちの才能が「3つの色」によって分類されます。</p>
+
+                        <ul class="color-types">
+                            <li><strong style="color: #4da6ff;">【青 (Blue)】</strong> 理を探究し、未来を創る「工学・科学」</li>
+                            <li><strong style="color: #ff4d4d;">【赤 (Red)】</strong> 命を紡ぎ、癒やしをもたらす「医療・生命」</li>
+                            <li><strong style="color: #4dff88;">【緑 (Green)】</strong> 秩序を守り、情報を支配する「法律・情報」</li>
+                        </ul>
+
+                        <p>学院の廊下ではドローンが魔導書を運び、実験室では魔法陣の上でホログラムが展開される——。<br>
+                        この混沌と秩序が入り混じる学園で、あなたの物語は幕を開けます。</p>
+
+                        <h3>◆ 主人公：天才たちを束ねる「神工研」の良心</h3>
+                        <p>あなたは、工学分野（青）に所属する王立ルーメン学院の2年生です。<br>
+                        派手な魔法や突飛な発明で周囲を振り回すクラスメイトたちとは対照的に、あなたは確かな技術と冷静な判断力を持つ、頼れるリーダー的存在。</p>
+                        <p>爆発寸前の実験を止めたり、迷子のドローンを修理したり、あるいは個性豊かすぎる（そして少し手のかかる）仲間たちの悩みに寄り添ったり。<br>
+                        腰に下げたツールポーチ一つで、学園のあらゆるトラブルを解決へと導きます。</p>
+
+                        <h3>◆ 予鈴は鳴った。席につこう。</h3>
+                        <p>普通であることが、ここでは最も特別な才能になるかもしれない。<br>
+                        個性爆発のクラスメイトたちと織りなす、騒がしくも輝かしい学園生活。</p>
+                        <p>その他のキャラクタービジュアルやキャスト情報、そして物語の詳細は近日公開予定です。<br>
+                        『アルセリア王国』の今後の展開に、どうぞご期待ください。</p>
+
                     </div>
 
                     <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.3); margin: 40px 0 20px;">
@@ -197,32 +323,37 @@
 
         // 記事を開く
         function openArticle(articleId) {
-            // リストを隠す
             newsList.style.display = 'none';
-            // 指定された記事を表示する
-            document.getElementById(articleId).style.display = 'block';
-            // 画面トップへスクロール
-            window.scrollTo(0, 0);
+            document.querySelectorAll('.article-view').forEach(art => art.style.display = 'none');
+            
+            const target = document.getElementById(articleId);
+            if(target) {
+                target.style.display = 'block';
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
         }
 
         // 記事を閉じてリストに戻る
         function closeArticle() {
-            // 全ての記事詳細を隠す
             const articles = document.querySelectorAll('.article-view');
             articles.forEach(art => art.style.display = 'none');
-            // リストを表示する
             newsList.style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         // --- 画像拡大のスクリプト ---
         const modal = document.getElementById('imageModal');
         const modalImg = document.getElementById('modalImg');
+
         function openModal(src) {
             modalImg.src = src;
             modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
         }
+
         function closeModal() {
             modal.classList.remove('active');
+            document.body.style.overflow = '';
         }
     </script>
 </body>
