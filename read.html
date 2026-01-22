@@ -78,7 +78,7 @@
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         const storyId = urlParams.get('id'); 
-	if (storyId) document.body.classList.add('theme-' + storyId);
+        if (storyId) document.body.classList.add('theme-' + storyId);
         const currentPage = parseInt(urlParams.get('p')) || 1;
 
         const contentEl = document.getElementById('novel-content');
@@ -89,6 +89,7 @@
             contentEl.innerHTML = '<p class="error-msg">作品が選択されていません。<br><a href="novel.html">一覧に戻る</a></p>';
             nextBtn.classList.add('hidden');
         } else {
+            // URLの ?id=〇〇 をフォルダ名として使います
             const filePath = `./novel/${storyId}/${currentPage}.txt`;
             loadNovel(filePath);
         }
@@ -101,12 +102,14 @@
                 })
                 .then(text => {
                     let formattedText = text;
+                    // 特殊タグの変換処理
                     formattedText = formattedText.replace(/\[\[rb:(.+?)>(.+?)\]\]/g, '<ruby>$1<rt>$2</rt></ruby>');
                     formattedText = formattedText.replace(/\[chapter:(.+?)\]/g, '<h2 class="chapter-title">$1</h2>');
                     formattedText = formattedText.replace(/\[newpage\]/g, '<hr>');
 
                     contentEl.innerHTML = formattedText;
                     
+                    // タイトル設定
                     const chapterMatch = text.match(/\[chapter:(.+?)\]/);
                     const title = chapterMatch ? chapterMatch[1] : `第${currentPage}話`;
                     document.title = title;
